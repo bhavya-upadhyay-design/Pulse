@@ -11,7 +11,9 @@ import 'state/pulse_store.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   final store = PulseStore();
-  applyScene(store, Uri.base.queryParameters['scene']);
+  // `?scene=request` or `#request` (hosted pages only pass the hash).
+  final frag = Uri.base.fragment;
+  applyScene(store, Uri.base.queryParameters['scene'] ?? (frag.isEmpty ? null : frag));
   // `?a11y=1` turns the semantics tree on (screen readers / UI tests on web).
   if (Uri.base.queryParameters['a11y'] == '1') SemanticsBinding.instance.ensureSemantics();
   runApp(ChangeNotifierProvider.value(value: store, child: const PulseApp()));

@@ -35,5 +35,5 @@ flutter run            # Android / iOS
 flutter run -d chrome  # web; shows the app in a phone frame on wide screens
 ```
 
-Jump to a state with `?scene=` on web: `onboarding` (default), `home`, `request`,
+Jump to a state with `?scene=` (or `#scene`, e.g. `#request`) on web: `onboarding` (default), `home`, `request`,
 `critical`, `event`, `outcome`, `bingo`. Add `a11y=1` to turn on the semantics tree.

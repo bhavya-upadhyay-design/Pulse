@@ -422,7 +422,12 @@ class _CheckinSheetState extends State<_CheckinSheet> {
   @override
   Widget build(BuildContext context) {
     final s = context.read<PulseStore>();
-    const feels = ['😴', '🙂', '😄', '💪'];
+    const feels = [
+      FluentIcons.emoji_sad_24_regular,
+      FluentIcons.emoji_meh_24_regular,
+      FluentIcons.emoji_smile_slight_24_regular,
+      FluentIcons.emoji_laugh_24_regular,
+    ];
     const feelLabels = ['Tired', 'Okay', 'Good', 'Great'];
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -466,7 +471,7 @@ class _CheckinSheetState extends State<_CheckinSheet> {
                             scale: _feel == i ? 1.25 : 1,
                             duration: PulseMotion.emphasis,
                             curve: Curves.easeOutBack,
-                            child: Text(feels[i], style: const TextStyle(fontSize: 24)),
+                            child: Icon(feels[i], size: 28, color: _feel == i ? OColor.green600 : OColor.gray600),
                           ),
                           Text(feelLabels[i], style: PText.bodyX(OColor.gray700)),
                         ],
