@@ -22,7 +22,8 @@ class LifelineCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<PulseStore>();
-    final r = s.request!;
+    final r = s.request;
+    if (r == null) return const SizedBox.shrink();
     return Container(
       decoration: BoxDecoration(
         gradient: PulseColors.card,
@@ -191,7 +192,8 @@ class WhyYouChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final r = store.request!;
+    final r = store.request;
+    if (r == null) return const SizedBox.shrink();
     final bg = onCrimson ? Colors.white.withValues(alpha: 0.18) : PulseColors.blush;
     final fg = onCrimson ? Colors.white : PulseColors.deep;
     final ne = store.nextEligible;
@@ -228,7 +230,8 @@ class FewOfUsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final r = store.request!;
+    final r = store.request;
+    if (r == null) return const SizedBox.shrink();
     final fg = onCrimson ? Colors.white : OColor.gray800;
     final sub = onCrimson ? Colors.white.withValues(alpha: 0.8) : OColor.gray600;
     final live =

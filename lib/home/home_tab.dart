@@ -253,7 +253,7 @@ class _ClosedAskCard extends StatelessWidget {
     final (icon, title, body, color) = switch (store.phase) {
       AskPhase.covered => (
         FluentIcons.heart_24_filled,
-        'Covered! ${store.request!.units} heroes said yes.',
+        'Covered! ${store.request?.units ?? 3} heroes said yes.',
         "We'll call on you next time, ${store.firstName}.",
         OColor.green600,
       ),

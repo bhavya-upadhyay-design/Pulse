@@ -21,7 +21,8 @@ class DonationEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<PulseStore>();
-    final r = s.request!;
+    final r = s.request;
+    if (r == null) return const SizedBox.shrink();
     return Container(
       decoration: BoxDecoration(
         color: OColor.white,
@@ -257,7 +258,8 @@ class _StageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = store;
-    final r = s.request!;
+    final r = s.request;
+    if (r == null) return const SizedBox.shrink();
     final slot = s.slot;
     final coord = r.coordinator;
 

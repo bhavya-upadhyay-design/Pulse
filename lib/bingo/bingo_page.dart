@@ -517,8 +517,8 @@ class _LinePainter extends CustomPainter {
       a,
       end,
       Paint()
-        ..color = const Color(0xFFDE1135).withValues(alpha: 0.75)
-        ..strokeWidth = 6
+        ..color = const Color(0xFFDE1135).withValues(alpha: 0.4)
+        ..strokeWidth = 4
         ..strokeCap = StrokeCap.round,
     );
   }

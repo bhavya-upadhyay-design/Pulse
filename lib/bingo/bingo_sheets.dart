@@ -35,9 +35,16 @@ class _WaterSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               for (var i = 0; i < 4; i++)
-                Pressable(
+                Semantics(
+                  button: true,
+                  label: 'Glass ${i + 1}',
+                  value: i < s.glasses ? 'Full' : 'Empty',
                   onTap: i == s.glasses ? () => s.addGlass() : null,
-                  child: _Glass(filled: i < s.glasses, next: i == s.glasses),
+                  excludeSemantics: true,
+                  child: Pressable(
+                    onTap: i == s.glasses ? () => s.addGlass() : null,
+                    child: _Glass(filled: i < s.glasses, next: i == s.glasses),
+                  ),
                 ),
             ],
           ),
