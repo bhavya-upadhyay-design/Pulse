@@ -1,0 +1,32 @@
+name: pulse
+description: "Pulse — personal blood donation requests for OneStop (IITG). Prototype of the blood-donation flows only."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # OneStop's own design system: Geist type scale, OColor, spacing, radii.
+  # Pinned to the commit the spec was written against.
+  onestop_ui:
+    git:
+      url: https://github.com/swciitg/onestop_ui.git
+      path: packages/onestop_ui
+      ref: 991770c10147a2169797583c16b29485ae25c024
+  fluentui_system_icons: ^1.1.273
+  flutter_svg: ^2.0.10
+  provider: ^6.1.2
+  qr_flutter: ^4.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
