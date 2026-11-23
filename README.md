@@ -1,39 +1,49 @@
 # Pulse: blood donation for OneStop
 
-A Flutter prototype of **Pulse**, the blood-donation flows for IITG's OneStop app.
-Only the blood-donation flows work. Home is a static copy of OneStop's Home so the
-request takeover can be judged in context; Food, Travel and Profile are placeholders.
+A Flutter prototype of the blood-donation flows for IITG's OneStop app, built
+from the Figma section "Screens" (file *Others*, node `1810:3556`).
 
-It uses OneStop's own design system ([`onestop_ui`](https://github.com/swciitg/onestop_ui)):
-Geist type scale, `OColor`, `OSpacing` and `OCornerRadius`. Pulse adds one crimson card
-language on top, built on OneStop's red scale (`lib/theme/pulse_tokens.dart`).
+- **Base app:** OneStop Home rebuilt from the onestop_flutter source in its
+  dark theme (Time Table, Food, Gatelog, Quick Access, Quick Links, bottom nav).
+  Only the Blood donation entry works; other tiles and tabs are stubs.
+- **From the Figma, copied 1:1:** the *New request widget* (Home, in place of
+  the Time Table card), the *Blood donation* Quick Access tile, and the blood
+  section with its own bottom nav: **My Donations**, **Explore**, **Hero wall**.
+- **Built in the same style:** request details, decline reasons, the accepted
+  event card with NSS updates, donated / couldn't-make-it outcomes, the hero
+  moment, Recovery Bingo with a mess-meal QR coupon, Learn articles,
+  certificates and the "Become a Lifeline" onboarding.
 
-## Flows
+## Design sources
 
-| Flow | Where |
+| Code | Figma |
 | --- | --- |
-| Onboarding: "Become a Lifeline" (blood group, last donated, weight) | `lib/onboarding/` |
-| Request takeover on Home: Lifeline Card, countdown, 6-slot "few of us" row, slide to accept | `lib/request/lifeline_card.dart`, `slide_to_accept.dart` |
-| Decline with one-tap reasons | `lib/request/decline_sheet.dart` |
-| Request details: POC, coordinator, what to expect, rewards, FAQ | `lib/request/request_detail_page.dart` |
-| Accepted: live-tracker Event Card pinned on Home, logistics as the admin adds them | `lib/event/event_card.dart` |
-| After the slot: "I donated" celebration or "I couldn't make it" | `lib/event/outcome_flows.dart` |
-| Recovery Bingo (3×3) with iron-rich mess-meal QR coupon | `lib/bingo/` |
-| Quick Access → Blood Donation hub: status, register, Hero Wall, Hostel Cup, history, camps | `lib/hub/` |
+| `lib/theme/bd.dart` | colours, radial gradient and type sizes from the frames |
+| `lib/blood/widgets/request_widget.dart` | New request widget `1810:8384` |
+| `lib/blood/blood_shell.dart` | header + nav pill `1810:6433` |
+| `lib/blood/tabs/my_donations_tab.dart` | My donations `1810:6337` |
+| `lib/blood/tabs/explore_tab.dart` | Explore `1810:6450` |
+| `lib/blood/tabs/hero_wall_tab.dart` | Hero wall `1810:8200` |
+| `assets/blood/` | icons, illustrations, avatars and hostel art exported from the file |
+
+Fonts: the Figma uses Uber Move, which is proprietary and can't be bundled, so
+blood-donation text uses OneStop's Geist at the same sizes and weights. The
+leaderboard uses Figtree as in the file (SIL Open Font License, `assets/fonts/`).
 
 ## No backend: the NSS console
 
-Tap **NSS console** in the app bar to play the admin and NSS coordinator side: raise a
-request, have other students accept, schedule the slot, send the pickup, mark the slot
-passed, confirm the donation, and so on. All state lives in `lib/state/pulse_store.dart`.
+Tap **NSS** in the top bar to play the admin and NSS coordinator: raise a
+request, have others accept, schedule the slot, send the pickup, mark the slot
+passed, confirm the donation. State lives in `lib/state/pulse_store.dart`.
 
 ## Run
 
 ```bash
 flutter pub get
 flutter run            # Android / iOS
-flutter run -d chrome  # web; shows the app in a phone frame on wide screens
+flutter run -d chrome  # web; shown in a phone frame on wide screens
 ```
 
-Jump to a state with `?scene=` (or `#scene`, e.g. `#request`) on web: `onboarding` (default), `home`, `request`,
-`critical`, `event`, `outcome`, `bingo`. Add `a11y=1` to turn on the semantics tree.
+On web, start at a state with `#scene`: `onboarding` (default), `home`,
+`request`, `critical`, `event`, `outcome`, `bingo`, `blood`, `explore`,
+`herowall`. Add `?a11y=1` to turn on the semantics tree.

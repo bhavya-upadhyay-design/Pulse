@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="315" height="187" viewBox="0 0 315 187" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 349">
+<path id="Rectangle 107" d="M0 16C0 7.16345 7.16344 0 16 0H299C307.837 0 315 7.16344 315 16V127.109C315 135.077 309.17 141.799 301.252 142.697C277.157 145.429 223.483 150.5 157 150.5C90.6553 150.5 37.5988 145.45 13.7191 142.714C5.81487 141.809 0 135.094 0 127.138V16Z" fill="url(#paint0_radial_0_4)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(112 53.5) rotate(83.1026) scale(124.904 208.47)">
+<stop stop-color="#C8596C"/>
+<stop offset="1" stop-color="#692F39"/>
+</radialGradient>
+</defs>
+</svg>

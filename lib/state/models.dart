@@ -1,100 +1,63 @@
 import 'package:flutter/material.dart';
 
 const bloodGroups = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'];
-const rareGroups = {'O−', 'AB−', 'B−'};
 
 class Contact {
   final String name;
   final String role;
   final String phone;
   final String initials;
-  final Color tint;
-  const Contact({
-    required this.name,
-    required this.role,
-    required this.phone,
-    required this.initials,
-    required this.tint,
-  });
-}
-
-class HeroEntry {
-  final String name;
-  final String hostel;
-  final String group;
-  final int nth;
-  final bool anonymous;
-  final Color tint;
-  final bool isYou;
-  const HeroEntry({
-    required this.name,
-    required this.hostel,
-    required this.group,
-    required this.nth,
-    required this.tint,
-    this.anonymous = false,
-    this.isYou = false,
-  });
+  const Contact({required this.name, required this.role, required this.phone, required this.initials});
 }
 
 /// One personal blood request this student was matched to.
 class BloodRequest {
   final String id;
-  final String group;
+  final String requester; // "Riya Majumdar"
+  final String group; // "O+"
+  final String reason; // "Her family member is undergoing surgery."
   final String hospital;
   final String hospitalArea;
-  final String? patientName; // null when the family did not consent
-  final int patientAge;
-  final String patientNote;
   final int units;
   final int asked;
   final DateTime deadline;
   final bool critical;
   final Contact poc;
   final Contact coordinator;
-  final double distanceMins;
 
-  BloodRequest({
+  const BloodRequest({
     required this.id,
+    required this.requester,
     required this.group,
+    required this.reason,
     required this.hospital,
     required this.hospitalArea,
-    required this.patientName,
-    required this.patientAge,
-    required this.patientNote,
     required this.units,
     required this.asked,
     required this.deadline,
     required this.critical,
     required this.poc,
     required this.coordinator,
-    required this.distanceMins,
   });
-
-  String get patientLabel => patientName ?? 'A $patientAge-year-old';
 }
 
 /// Where an open ask stands for this student.
 enum AskPhase { none, open, accepted, covered, expired, declined, cancelled }
 
-/// Live-order style tracker for an accepted donation.
+/// Tracker for an accepted donation.
 enum EventStage { accepted, scheduled, pickup, atBank, awaitingOutcome, donated, missed, closed }
 
+const trackerLabels = ['Accepted', 'Slot set', 'Pickup', 'At bank', 'Donated'];
+
 extension EventStageX on EventStage {
-  /// Index on the 6-dot tracker.
   int get trackerIndex => switch (this) {
     EventStage.accepted => 0,
     EventStage.scheduled => 1,
     EventStage.pickup => 2,
-    EventStage.atBank => 3,
-    EventStage.awaitingOutcome => 3,
-    EventStage.donated => 4,
-    EventStage.missed => 3,
-    EventStage.closed => 5,
+    EventStage.atBank || EventStage.awaitingOutcome || EventStage.missed => 3,
+    EventStage.donated || EventStage.closed => 4,
   };
 }
-
-const trackerLabels = ['Accepted', 'Slot set', 'Pickup', 'At bank', 'Donated', 'Bingo'];
 
 class SlotInfo {
   DateTime? slotAt;
@@ -111,15 +74,40 @@ class SlotInfo {
   }
 }
 
-class DonationRecord {
+class Camp {
+  final String id;
+  final String name;
+  final String place;
   final DateTime date;
-  final String hospital;
-  final String group;
-  final String outcome; // Donated, Showed up, Missed
-  const DonationRecord(this.date, this.hospital, this.group, this.outcome);
+  final String hours;
+  const Camp(this.id, this.name, this.place, this.date, this.hours);
 }
 
-enum Eligibility { ready, waiting, paused, unknown }
+class DonationRecord {
+  final DateTime date;
+  final String name;
+  final String place;
+  final String hours;
+  final bool certificate;
+  const DonationRecord(this.date, this.name, this.place, this.hours, {this.certificate = true});
+}
+
+class Donor {
+  final String name;
+  final String initials;
+  final DateTime date;
+  final bool isYou;
+  const Donor(this.name, this.initials, this.date, {this.isYou = false});
+}
+
+class HostelScore {
+  final String name;
+  final String asset;
+  final int heroes;
+  const HostelScore(this.name, this.asset, this.heroes);
+}
+
+enum Eligibility { ready, waiting, unknown }
 
 class BingoTile {
   final String id;
@@ -140,23 +128,26 @@ class Coupon {
   final String code;
   final String mess;
   final String dish;
-  final DateTime validFrom;
   final DateTime validUntil;
   bool redeemed;
-  Coupon({
-    required this.code,
-    required this.mess,
-    required this.dish,
-    required this.validFrom,
-    required this.validUntil,
-    this.redeemed = false,
-  });
+  Coupon({required this.code, required this.mess, required this.dish, required this.validUntil, this.redeemed = false});
 }
 
 class PushNote {
   final String title;
   final String body;
-  final IconData icon;
-  final DateTime at;
-  PushNote(this.title, this.body, this.icon) : at = DateTime.now();
+  PushNote(this.title, this.body);
+}
+
+String monthShort(DateTime d) => const ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.month - 1];
+
+String dayLabel(DateTime d) {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  return '${days[d.weekday - 1]}, ${d.day} ${monthShort(d)}';
+}
+
+String timeLabel(DateTime d) {
+  final h = d.hour % 12 == 0 ? 12 : d.hour % 12;
+  final m = d.minute.toString().padLeft(2, '0');
+  return '$h:$m ${d.hour < 12 ? 'AM' : 'PM'}';
 }
