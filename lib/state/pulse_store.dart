@@ -210,45 +210,68 @@ class PulseStore extends ChangeNotifier {
 
   void _mark(String k) => slot.updated[k] = DateTime.now();
 
+  /// NSS sets the donation slot (date, time, place) agreed with the POC.
   void adminSchedule() {
     if (!eventActive) return;
     final now = DateTime.now();
     final day = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
     slot
       ..slotAt = day.add(const Duration(hours: 10, minutes: 30))
-      ..pickupAt = day.add(const Duration(hours: 10))
-      ..pickupPoint = '$hostel Hostel gate'
       ..address = 'GMCH Blood Bank, Block B, Bhangagarh, Guwahati 781032'
       ..note = 'Eat a light breakfast. Carry your college ID.';
-    for (final k in ['slot', 'pickup', 'address', 'note']) {
+    for (final k in ['slot', 'address', 'note']) {
       _mark(k);
     }
+    // A ride arranged earlier now picks up 40 min before the slot.
+    if (ride == RideStatus.arranged) {
+      slot.pickupAt = slot.slotAt!.subtract(const Duration(minutes: 40));
+      _mark('pickup');
+    }
     stage = EventStage.scheduled;
-    push('Slot booked: ${dayLabel(slot.slotAt!)}, 10:30 AM', 'Pickup at $hostel gate, 10:00. Eat a light breakfast.');
+    push(
+      'Slot set: ${dayLabel(slot.slotAt!)}, ${timeLabel(slot.slotAt!)}',
+      '${request?.hospital} Blood Bank. Coordinate your visit with the POC.',
+    );
     notifyListeners();
   }
 
-  void adminPickup() {
+  // ───────────── Ride (optional) ─────────────
+  RideStatus ride = RideStatus.none;
+
+  void requestRide() {
     if (!eventActive) return;
-    if (slot.slotAt == null) adminSchedule();
-    slot.vehicle = 'NSS van • AS01 BC 4412';
-    _mark('vehicle');
-    stage = EventStage.pickup;
-    push('Your ride leaves in 15 min', 'From $hostel Hostel gate. Sneha is on board.');
+    ride = RideStatus.requested;
+    slot
+      ..vehicle = null
+      ..pickupPoint = null
+      ..pickupAt = null;
     notifyListeners();
   }
 
-  void adminAtBank() {
-    if (!eventActive) return;
-    if (slot.slotAt == null) adminSchedule();
-    stage = EventStage.atBank;
+  void cancelRide() {
+    ride = RideStatus.none;
     notifyListeners();
   }
 
-  void adminPassSlot() {
-    if (!eventActive) return;
-    if (slot.slotAt == null) adminSchedule();
-    stage = EventStage.awaitingOutcome;
+  void adminArrangeRide() {
+    if (ride != RideStatus.requested) return;
+    final base = slot.slotAt ?? DateTime.now().add(const Duration(hours: 2));
+    slot
+      ..pickupAt = base.subtract(const Duration(minutes: 40))
+      ..pickupPoint = '$hostel Hostel gate'
+      ..vehicle = 'NSS van • AS01 BC 4412';
+    for (final k in ['pickup', 'vehicle']) {
+      _mark(k);
+    }
+    ride = RideStatus.arranged;
+    push('Ride arranged', 'Pickup at ${slot.pickupPoint}, ${timeLabel(slot.pickupAt!)}.');
+    notifyListeners();
+  }
+
+  void adminDeclineRide() {
+    if (ride != RideStatus.requested) return;
+    ride = RideStatus.declined;
+    push("Ride isn't possible right now", 'Please travel on your own, or talk to Sneha.');
     notifyListeners();
   }
 
@@ -440,6 +463,7 @@ class PulseStore extends ChangeNotifier {
     acceptedAt = null;
     stage = EventStage.accepted;
     slot = SlotInfo();
+    ride = RideStatus.none;
     donationConfirmed = false;
     deferred = false;
     ticked.clear();

@@ -1,3 +1,5 @@
+import 'dart:ui' show PointerDeviceKind;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -53,12 +55,12 @@ void applyScene(PulseStore s, String? scene) {
       s.adminRaiseRequest();
       s.accept();
       s.acceptedAt = null;
-      s.adminPassSlot();
+      s.adminSchedule();
     case 'bingo':
       s.adminRaiseRequest();
       s.accept();
       s.acceptedAt = null;
-      s.adminPassSlot();
+      s.adminSchedule();
       s.reportDonated();
       s.adminConfirmDonation();
   }
@@ -82,6 +84,8 @@ class PulseApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: OColor.green600, brightness: Brightness.dark, primary: OColor.green600),
         appBarTheme: const AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.light),
       ),
+      // Let mouse and trackpad drag horizontal lists on desktop browsers too.
+      scrollBehavior: const MaterialScrollBehavior().copyWith(dragDevices: PointerDeviceKind.values.toSet()),
       builder: (context, child) => _PhoneFrame(child: child!),
       home: _Root(scene: scene),
     );

@@ -58,7 +58,7 @@ class RequestDetailsPage extends StatelessWidget {
                             _Section(
                               title: 'Your NSS coordinator',
                               delay: 3,
-                              child: _Person(c: r.coordinator, line: 'Sneha will plan your pickup and stay with you through it.'),
+                              child: _Person(c: r.coordinator, line: 'Sneha shares your slot and can arrange a ride if you need one.'),
                             ),
                             const _Section(title: 'What to expect', delay: 4, child: _Expect()),
                             const _Section(title: 'What you get', delay: 5, padded: false, child: _Rewards()),
@@ -235,7 +235,12 @@ class _Need extends StatelessWidget {
             children: [
               const Icon(FluentIcons.vehicle_car_20_regular, size: 18, color: BD.textSecondary),
               gap12,
-              Expanded(child: Text('NSS arranges the pickup from your hostel and drops you back.', style: T.regular(12, BD.text700))),
+              Expanded(
+                child: Text(
+                  'Most donors travel on their own. Need a ride? Request one after you say yes.',
+                  style: T.regular(12, BD.text700),
+                ),
+              ),
             ],
           ),
         ),
@@ -306,7 +311,7 @@ class _Expect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const steps = [
-      (FluentIcons.vehicle_car_20_regular, 'Pickup', 'From hostel'),
+      (FluentIcons.vehicle_car_20_regular, 'Travel', 'On your own or NSS ride'),
       (FluentIcons.stethoscope_20_regular, 'Check-up', 'Hb, BP • 10 min'),
       (FluentIcons.drop_20_regular, 'Donate', '~10 min'),
       (FluentIcons.food_cake_20_regular, 'Rest', 'Snacks • 15 min'),

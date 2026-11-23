@@ -45,27 +45,29 @@ class BloodRequest {
 enum AskPhase { none, open, accepted, covered, expired, declined, cancelled }
 
 /// Tracker for an accepted donation.
-enum EventStage { accepted, scheduled, pickup, atBank, awaitingOutcome, donated, missed, closed }
+enum EventStage { accepted, scheduled, donated, missed, closed }
 
-const trackerLabels = ['Accepted', 'Slot set', 'Pickup', 'At bank', 'Donated'];
+/// Optional ride to the hospital, requested by the student.
+enum RideStatus { none, requested, arranged, declined }
+
+const trackerLabels = ['Accepted', 'Slot set', 'Donated'];
 
 extension EventStageX on EventStage {
   int get trackerIndex => switch (this) {
     EventStage.accepted => 0,
-    EventStage.scheduled => 1,
-    EventStage.pickup => 2,
-    EventStage.atBank || EventStage.awaitingOutcome || EventStage.missed => 3,
-    EventStage.donated || EventStage.closed => 4,
+    EventStage.scheduled || EventStage.missed => 1,
+    EventStage.donated || EventStage.closed => 2,
   };
 }
 
 class SlotInfo {
   DateTime? slotAt;
+  String? address;
+  String? note;
+  // Ride, only when the student asked for one and NSS arranged it.
   String? pickupPoint;
   DateTime? pickupAt;
-  String? address;
   String? vehicle;
-  String? note;
   final Map<String, DateTime> updated = {};
 
   bool isFresh(String key) {

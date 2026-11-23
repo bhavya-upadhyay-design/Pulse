@@ -42,7 +42,10 @@ class _BecomeLifelineState extends State<BecomeLifeline> {
   Widget build(BuildContext context) {
     final s = context.read<PulseStore>();
     final now = DateTime.now();
-    final months = List.generate(18, (i) => DateTime(now.year, now.month - i));
+    // This month back 12 months (e.g. Nov 2026 … Nov 2025), then "Before Nov 2025".
+    final months = List.generate(13, (i) => DateTime(now.year, now.month - i));
+    final oldest = months.last;
+    final before = DateTime(oldest.year, oldest.month - 1);
     final body = AnimatedSwitcher(
       duration: BD.slow,
       child:
@@ -88,12 +91,6 @@ class _BecomeLifelineState extends State<BecomeLifeline> {
                         const DropMedallion(),
                         const SizedBox(height: 15),
                         Text('Become a Lifeline', style: T.bold(18)),
-                        const SizedBox(height: 11),
-                        Text(
-                          '3 quick answers so we only ask you when you can really help.',
-                          textAlign: TextAlign.center,
-                          style: T.regular(12, BD.textSecondary),
-                        ),
                         gap16,
                         UnitsBar(units: 3, confirmed: _answered),
                       ],
@@ -157,6 +154,16 @@ class _BecomeLifelineState extends State<BecomeLifeline> {
                                 }),
                           ),
                         ],
+                        gap8,
+                        ChipPill(
+                          text: 'Before ${monthShort(oldest)} ${oldest.year}',
+                          selected: _never == false && _last == before,
+                          onTap:
+                              () => setState(() {
+                                _never = false;
+                                _last = before;
+                              }),
+                        ),
                       ],
                     ),
                   ),
@@ -188,8 +195,10 @@ class _BecomeLifelineState extends State<BecomeLifeline> {
                     label: _answered == 3 ? 'Become a Lifeline' : 'Answer ${3 - _answered} more',
                     onTap: _answered == 3 ? _finish : null,
                   ),
-                  if (!widget.asSheet)
+                  if (!widget.asSheet) ...[
+                    gap16,
                     TextButton(onPressed: s.skipOnboarding, child: Text('Skip for now', style: T.medium(13, BD.textSecondary))),
+                  ],
                 ],
               ),
     );

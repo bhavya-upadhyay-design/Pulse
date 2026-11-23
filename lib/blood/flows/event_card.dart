@@ -81,11 +81,8 @@ class DonationEventCard extends StatelessWidget {
   }
 
   String _headline(PulseStore s) => switch (s.stage) {
-    EventStage.accepted => 'Sneha is setting your slot',
-    EventStage.scheduled => 'Your slot is booked',
-    EventStage.pickup => 'Your ride is on the way',
-    EventStage.atBank => "You've got this, ${s.firstName}",
-    EventStage.awaitingOutcome => 'How did it go?',
+    EventStage.accepted => 'Coordinate with the POC',
+    EventStage.scheduled => 'Your slot is set',
     EventStage.donated => "You're a hero, ${s.firstName}",
     EventStage.missed => s.deferred ? 'You showed up. That counts.' : 'Life happens',
     EventStage.closed => '',
@@ -98,7 +95,7 @@ class _Overflow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canDrop = [EventStage.accepted, EventStage.scheduled, EventStage.pickup].contains(store.stage);
+    final canDrop = [EventStage.accepted, EventStage.scheduled].contains(store.stage);
     if (!canDrop) return const SizedBox.shrink();
     return PopupMenuButton<String>(
       tooltip: 'More',
@@ -196,36 +193,29 @@ class _StageBody extends StatelessWidget {
     final s = store;
     final r = s.request!;
     final slot = s.slot;
-    final coordinator = BdButton(
-      label: 'Contact NSS coordinator',
-      icon: FluentIcons.chat_20_filled,
-      onTap:
-          () =>
-              showContactSheet(context, r.coordinator, line: 'Sneha is planning your slot and pickup, and will stay with you through it.'),
-    );
-    final poc = BdButton(
-      label: 'Contact POC',
-      outline: true,
-      icon: FluentIcons.call_20_regular,
-      onTap: () => showContactSheet(context, r.poc, line: 'Ask anything about the patient or the blood bank.'),
-    );
+    void contactNss() =>
+        showContactSheet(context, r.coordinator, line: 'Sneha coordinates your slot and can arrange a ride if you need one.');
+    void contactPoc() =>
+        showContactSheet(context, r.poc, line: 'Coordinate your visit and ask anything about the patient or the blood bank.');
 
     switch (s.stage) {
       case EventStage.accepted:
+        // Before a slot: NSS coordinator is the main contact.
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _Line(icon: FluentIcons.calendar_checkmark_20_regular, text: 'Added to your OneStop calendar. Reminder 2 h before.'),
-            _Line(icon: FluentIcons.clock_20_regular, text: 'Slot and pickup usually confirmed within 3 hours.'),
+            _Line(icon: FluentIcons.clock_20_regular, text: 'Sneha will share your donation slot here once it is agreed with the POC.'),
+            gap4,
+            _RideBlock(store: s),
             gap12,
-            coordinator,
+            BdButton(label: 'Contact NSS coordinator', icon: FluentIcons.chat_20_filled, onTap: contactNss),
             gap8,
-            poc,
+            BdButton(label: 'Contact POC', outline: true, icon: FluentIcons.call_20_regular, onTap: contactPoc),
           ],
         );
       case EventStage.scheduled:
-      case EventStage.pickup:
-      case EventStage.atBank:
+        // After the slot: POC becomes the main contact; the student can mark
+        // the donation done at any point.
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -237,45 +227,35 @@ class _StageBody extends StatelessWidget {
                   child: EventInfo(
                     title: '${r.hospital} Blood Bank',
                     line1: '${dayLabel(slot.slotAt!)} • ${timeLabel(slot.slotAt!)}',
-                    line2: 'Donation ~10 min • about 1 h door to door',
+                    line2: 'Donation ~10 min • about 1 h in all',
                   ),
                 ),
               ],
             ),
             gap12,
-            _Info(
-              fresh: slot.isFresh('pickup'),
-              icon: FluentIcons.vehicle_car_20_regular,
-              k: 'Pickup',
-              v: '${slot.pickupPoint} • ${timeLabel(slot.pickupAt!)}',
-            ),
             _Info(fresh: slot.isFresh('address'), icon: FluentIcons.location_20_regular, k: 'Address', v: slot.address!),
-            if (slot.vehicle != null)
-              _Info(fresh: slot.isFresh('vehicle'), icon: FluentIcons.vehicle_bus_20_regular, k: 'Vehicle', v: slot.vehicle!),
             _Info(fresh: slot.isFresh('note'), icon: FluentIcons.food_20_regular, k: 'Before you go', v: slot.note!),
+            gap4,
+            _RideBlock(store: s),
             gap12,
-            coordinator,
+            BdButton(label: 'Contact POC', icon: FluentIcons.call_20_filled, onTap: contactPoc),
             gap8,
-            poc,
-          ],
-        );
-      case EventStage.awaitingOutcome:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text('Your slot time has passed. Let us know in one tap.', style: T.regular(12, BD.textSecondary), textAlign: TextAlign.center),
-            gap12,
-            Heartbeat(
-              strength: 0.3,
-              child: BdButton(
-                label: 'I donated',
-                icon: FluentIcons.heart_20_filled,
-                color: BD.toggleOn,
-                onTap: () => openDonatedCelebration(context),
+            BdButton(label: 'Contact NSS coordinator', outline: true, icon: FluentIcons.chat_20_regular, onTap: contactNss),
+            gap16,
+            Container(height: 1, color: BD.border),
+            gap16,
+            BdButton(
+              label: 'Mark donation as completed',
+              icon: FluentIcons.heart_20_filled,
+              color: BD.toggleOn,
+              onTap: () => openDonatedCelebration(context),
+            ),
+            Center(
+              child: TextButton(
+                onPressed: () => showMissedSheet(context),
+                child: Text("I couldn't make it", style: T.medium(12, BD.textSecondary)),
               ),
             ),
-            gap8,
-            BdButton(label: "I couldn't make it", outline: true, color: BD.textSecondary, onTap: () => showMissedSheet(context)),
           ],
         );
       case EventStage.donated:
@@ -344,6 +324,140 @@ class _StageBody extends StatelessWidget {
         return const SizedBox.shrink();
     }
   }
+}
+
+/// Optional ride to the hospital. Most students travel on their own; NSS
+/// can arrange a ride on request, or decline if it isn't feasible.
+class _RideBlock extends StatelessWidget {
+  final PulseStore store;
+  const _RideBlock({required this.store});
+
+  @override
+  Widget build(BuildContext context) {
+    final s = store;
+    final slot = s.slot;
+    Widget box({required Widget child, Color border = BD.border, Color? bg}) => Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: bg ?? BD.page, borderRadius: BorderRadius.circular(12), border: Border.all(color: border)),
+      child: child,
+    );
+    return AnimatedSwitcher(
+      duration: BD.medium,
+      child: KeyedSubtree(
+        key: ValueKey(s.ride),
+        child: switch (s.ride) {
+          RideStatus.none => box(
+            child: Row(
+              children: [
+                const Icon(FluentIcons.vehicle_car_20_regular, size: 20, color: BD.textSecondary),
+                gap12,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Travelling on your own?', style: T.bold(12)),
+                      const SizedBox(height: 2),
+                      Text(
+                        'If not, ask NSS for a ride to ${s.request?.hospital ?? 'the hospital'}.',
+                        style: T.regular(11, BD.textSecondary),
+                      ),
+                    ],
+                  ),
+                ),
+                gap8,
+                _SmallPill(label: 'Request a ride', onTap: s.requestRide),
+              ],
+            ),
+          ),
+          RideStatus.requested => box(
+            border: BD.greenCta,
+            child: Row(
+              children: [
+                const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: BD.green)),
+                gap12,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Ride requested', style: T.bold(12)),
+                      const SizedBox(height: 2),
+                      Text("Sneha will arrange it or let you know if it isn't possible.", style: T.regular(11, BD.textSecondary)),
+                    ],
+                  ),
+                ),
+                gap8,
+                _SmallPill(label: 'Cancel', onTap: s.cancelRide, muted: true),
+              ],
+            ),
+          ),
+          RideStatus.arranged => box(
+            border: BD.greenCta,
+            bg: BD.greenBadgeBg,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(FluentIcons.checkmark_circle_20_filled, size: 18, color: BD.green),
+                    gap8,
+                    Text('Ride arranged by NSS', style: T.bold(12, BD.green)),
+                  ],
+                ),
+                gap8,
+                _Info(
+                  fresh: slot.isFresh('pickup'),
+                  icon: FluentIcons.location_20_regular,
+                  k: 'Pickup',
+                  v: '${slot.pickupPoint} • ${timeLabel(slot.pickupAt!)}',
+                ),
+                _Info(fresh: slot.isFresh('vehicle'), icon: FluentIcons.vehicle_car_20_regular, k: 'Vehicle', v: slot.vehicle!),
+              ],
+            ),
+          ),
+          RideStatus.declined => box(
+            child: Row(
+              children: [
+                const Icon(FluentIcons.vehicle_car_20_regular, size: 20, color: BD.toggleOn),
+                gap12,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("A ride isn't possible right now", style: T.bold(12)),
+                      const SizedBox(height: 2),
+                      Text('Please travel on your own, or talk to Sneha.', style: T.regular(11, BD.textSecondary)),
+                    ],
+                  ),
+                ),
+                gap8,
+                _SmallPill(label: 'Ask again', onTap: s.requestRide),
+              ],
+            ),
+          ),
+        },
+      ),
+    );
+  }
+}
+
+class _SmallPill extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+  final bool muted;
+  const _SmallPill({required this.label, required this.onTap, this.muted = false});
+
+  @override
+  Widget build(BuildContext context) => Pressable(
+    onTap: onTap,
+    child: Container(
+      height: 28,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(border: Border.all(color: muted ? BD.border : BD.greenCta), borderRadius: BorderRadius.circular(71)),
+      child: Text(label, style: T.medium(12, muted ? BD.textSecondary : BD.green)),
+    ),
+  );
 }
 
 class _Line extends StatelessWidget {

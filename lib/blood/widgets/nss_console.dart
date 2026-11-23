@@ -92,15 +92,9 @@ class _Console extends StatelessWidget {
           act('Expire response window', FluentIcons.timer_off_20_regular, open, s.adminExpire),
           act('Hospital cancels request', FluentIcons.dismiss_circle_20_regular, open || ev, s.adminCancel),
           head('NSS coordinator • event'),
-          act('Schedule slot and pickup', FluentIcons.calendar_add_20_regular, ev && s.stage == EventStage.accepted, s.adminSchedule),
-          act('Pickup on the way', FluentIcons.vehicle_car_20_regular, ev && s.stage.index < EventStage.pickup.index, s.adminPickup),
-          act('Donor at the blood bank', FluentIcons.building_20_regular, ev && s.stage.index < EventStage.atBank.index, s.adminAtBank),
-          act(
-            'Slot time has passed',
-            FluentIcons.clock_20_regular,
-            ev && s.stage.index < EventStage.awaitingOutcome.index,
-            s.adminPassSlot,
-          ),
+          act('Set donation slot', FluentIcons.calendar_add_20_regular, ev && s.stage == EventStage.accepted, s.adminSchedule),
+          act('Arrange requested ride', FluentIcons.vehicle_car_20_regular, ev && s.ride == RideStatus.requested, s.adminArrangeRide),
+          act('Decline ride request', FluentIcons.dismiss_circle_20_regular, ev && s.ride == RideStatus.requested, s.adminDeclineRide),
           head('After donation'),
           act(
             'Confirm donation (unlocks meal)',
