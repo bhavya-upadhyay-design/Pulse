@@ -15,8 +15,13 @@ class NssConsoleButton extends StatelessWidget {
   final bool compact;
   const NssConsoleButton({super.key, this.compact = true});
 
+  // `?clean=1` hides the demo button (still tappable) for presentation screenshots.
+  static final bool _clean = Uri.base.queryParameters['clean'] == '1';
+
   @override
-  Widget build(BuildContext context) => Semantics(
+  Widget build(BuildContext context) => Opacity(opacity: _clean ? 0 : 1, child: _button(context));
+
+  Widget _button(BuildContext context) => Semantics(
     button: true,
     label: 'NSS console',
     excludeSemantics: true,
