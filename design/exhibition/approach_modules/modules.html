@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Geist; src: local("Geist") /* Geist, from onestop_ui */; font-weight: 100 900; }
+  :root { --green: #299856; --ink: #151517; --ink2: #4A4A50; --muted: #9A9AA0; --chip: #FFEAEF; --pink: #FFF6F8; --line: #EDE3E6; --red: #E2365A; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #fff; font-family: Geist, Inter, system-ui, sans-serif; color: var(--ink); }
+  .m { position: relative; width: 900px; height: 460px; background: #fff; padding: 30px 48px; margin-bottom: 20px; }
+  h1 { font-size: 40px; font-weight: 700; color: var(--green); letter-spacing: -.5px; }
+  .art { margin-top: 26px; height: 150px; position: relative; }
+  .move { position: absolute; left: 62px; top: 256px; width: 700px; font-size: 22px; line-height: 1.3; }
+  .chips { position: absolute; left: 48px; top: 346px; display: flex; gap: 24px; }
+  .chips span { background: var(--chip); border-radius: 99px; padding: 12px 14px; font-size: 20px; }
+  .cap { font-size: 13px; color: var(--muted); letter-spacing: .3px; }
+
+  /* Ability: friction map */
+  .steps { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+  .st { font-size: 14px; color: var(--muted); background: #F4F2EF; border-radius: 10px; padding: 8px 10px; text-decoration: line-through; text-decoration-color: rgba(0,0,0,.3); white-space: nowrap; }
+  .steps i { font-style: normal; color: #CFC9C0; font-size: 14px; }
+  .collapse { display: flex; align-items: center; gap: 18px; margin-top: 18px; }
+  .collapse .cap b { color: var(--ink); font-size: 15px; }
+  .slider { position: relative; width: 300px; height: 52px; border-radius: 99px; background: linear-gradient(90deg, #8A3947, #4F272E); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 15px; font-weight: 500; box-shadow: 0 10px 24px rgba(85,9,43,.25); }
+  .slider .knob { position: absolute; left: 5px; top: 5px; width: 42px; height: 42px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--red); font-size: 20px; }
+  .count { display: flex; align-items: baseline; gap: 8px; }
+  .count b { font-size: 40px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+  .count s { font-size: 26px; color: var(--muted); }
+
+  /* Prompt: inbox noise */
+  .noise { position: relative; display: flex; gap: 28px; align-items: center; }
+  .inbox { width: 400px; border-radius: 14px; border: 1px solid #EEE; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 26px 1fr 52px; gap: 10px; align-items: center; padding: 7px 12px; border-bottom: 1px solid #F2F2F2; filter: grayscale(1); opacity: .55; }
+  .row .a { width: 24px; height: 24px; border-radius: 50%; background: #DDD; }
+  .row .t { height: 8px; border-radius: 4px; background: #D9D9D9; }
+  .row .t2 { height: 6px; border-radius: 3px; background: #E8E8E8; margin-top: 5px; width: 70%; }
+  .row em { font-style: normal; font-size: 10.5px; color: #999; }
+  .row.s .t { width: 85%; }
+  .card { position: relative; width: 330px; border-radius: 16px; padding: 14px 16px; color: #fff; background: radial-gradient(120% 140% at 50% 0%, #8A3947 0%, #4F272E 55%, #141414 100%); box-shadow: 0 16px 30px rgba(85,9,43,.3); }
+  .card small { font-size: 11px; color: #E9C6CE; letter-spacing: .6px; }
+  .card b { display: block; font-size: 17px; margin-top: 4px; }
+  .card p { font-size: 13px; color: #D8C2C7; margin-top: 4px; }
+  .card .ic { position: absolute; right: 14px; top: 14px; width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); display: grid; place-items: center; }
+  .card .ic img { width: 12px; }
+  .vs { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  /* Loop: peer ripple */
+  .ripple { display: flex; align-items: center; gap: 14px; }
+  .node { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink2); }
+  .node .av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #fff; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--green); }
+  .node .av img { width: 100%; height: 100%; object-fit: cover; }
+  .node .badge { width: 64px; height: 64px; border-radius: 50%; background: #8A3E4B; display: grid; place-items: center; }
+  .node .badge img { width: 28px; }
+  .node.next .av { box-shadow: 0 0 0 3px #E8E8E8; opacity: .6; }
+  .link { font-size: 22px; color: var(--green); margin-bottom: 20px; }
+  .stat { margin-left: 18px; padding-left: 22px; border-left: 2px solid var(--line); }
+  .stat b { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--green); line-height: 1; }
+  .stat p { font-size: 14.5px; line-height: 1.35; color: var(--ink2); margin-top: 4px; width: 200px; }
+
+  .st { font-size: 12.5px; padding: 6px 8px; }
+  .steps { gap: 4px; }
+  .steps i { font-size: 12px; }
+  .row { padding: 6px 12px; }
+  .inbox { width: 380px; }
+  .noise { align-items: flex-end; }
+
+  .move { top: 272px; }
+  .chips { top: 356px; }
+  #prompt .art, #loop .art { margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<!-- ABILITY -->
+<div class="m" id="ability">
+  <h1>Ability</h1>
+  <div class="art">
+    <div class="cap">TODAY · WHAT A STUDENT HAD TO DO ALONE</div>
+    <div class="steps" style="margin-top:10px">
+      <span class="st">Open the mail</span><i>›</i><span class="st">Match blood group</span><i>›</i><span class="st">Am I eligible?</span><i>›</i><span class="st">Call coordinator</span><i>›</i><span class="st">Arrange travel</span><i>›</i><span class="st">Find hospital</span>
+    </div>
+    <div class="collapse">
+      <div class="count"><s>6</s><b>→ 1</b></div>
+      <div class="slider"><div class="knob">♡</div>Slide to say yes &gt;&gt;</div>
+      <div class="cap"><b>One gesture.</b><br>Eligibility pre-checked, ride on request.</div>
+    </div>
+  </div>
+  <p class="move">Pre-screened at onboarding, slide to commit, POC on tap, ride on request</p>
+  <div class="chips"><span>Friction audit</span><span>Commitment device</span><span>Progressive disclosure</span></div>
+</div>
+
+<!-- PROMPT -->
+<div class="m" id="prompt">
+  <h1>Prompt</h1>
+  <div class="art">
+    <div class="noise">
+      <div>
+        <div class="cap" style="margin-bottom:8px">TODAY · LOST IN THE INBOX</div>
+        <div class="inbox">
+          <div class="row"><div class="a"></div><div><div class="t"></div><div class="t2"></div></div><em>10:52</em></div>
+          <div class="row s"><div class="a"></div><div><div class="t"></div><div class="t2"></div></div><em>09:14</em></div>
+          <div class="row"><div class="a"></div><div><div class="t"></div><div class="t2"></div></div><em>Yesterday</em></div>
+        </div>
+      </div>
+      <div class="vs">→</div>
+      <div>
+        <div class="cap" style="margin-bottom:8px">NOW · TOP OF ONESTOP HOME</div>
+        <div class="card"><div class="ic"><img src="drop_flame.svg" alt=""></div><small>FOR YOU · 1:59:49 LEFT</small><b>You've been matched to help</b><p>Riya needs O+ blood today.</p></div>
+      </div>
+    </div>
+  </div>
+  <p class="move">A matched, just-in-time ask that takes the top of OneStop Home</p>
+  <div class="chips"><span>Signal-to-noise</span><span>Just-in-time prompt</span><span>Contextual placement</span></div>
+</div>
+
+<!-- LOOP -->
+<div class="m" id="loop">
+  <h1>Loop</h1>
+  <div class="art">
+    <div class="cap" style="margin-bottom:12px">ONE DONATION SEEDS THE NEXT</div>
+    <div class="ripple">
+      <div class="node"><div class="badge"><img src="hero_badge.png" alt=""></div>Hero moment</div>
+      <div class="link">→</div>
+      <div class="node"><div class="av"><img src="avatar_1.png" alt=""></div>Hero wall</div>
+      <div class="link">→</div>
+      <div class="node"><div class="av"><img src="avatar_3.png" alt=""></div>Nominates a friend</div>
+      <div class="link">→</div>
+      <div class="node next"><div class="av"><img src="avatar_4.png" alt=""></div>Next donor</div>
+      <div class="stat"><b>46%</b><p>of regular donors started because a donor friend influenced them</p></div>
+    </div>
+  </div>
+  <p class="move">A hero moment, Recovery Bingo and the Hero wall make it repeatable</p>
+  <div class="chips"><span>Peak-end rule</span><span>Closed feedback loop</span><span>Social proof</span></div>
+</div>
+
+</body>
+</html>
