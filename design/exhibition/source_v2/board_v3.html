@@ -1,0 +1,310 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Breaking the Bystander Effect</title>
+<style>
+  @font-face { font-family: Geist; src: local("Geist") /* Geist, from onestop_ui */; font-weight: 100 900; }
+  :root {
+    --bg: #F0ECE3; --ink: #151517; --ink2: #48484E; --muted: #8A8A90;
+    --maroon: #55092B; --coral: #F08A8A; --coral-ink: #4A0A1E; --purple: #A79BE0; --green: #86D4A6;
+    --rose: #A64D74; --pink: #FBE3E6; --red: #E2365A; --grey: #6C6E74;
+    /* cause code, used from quotes → causes → design */
+    --A: #E2365A; --B: #E8961E; --C: #1E8A5A; --D: #6C4BC4; --E: #1C6FBF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: Geist, system-ui, sans-serif; color: var(--ink); }
+  .board { position: relative; width: 1980px; height: 2970px; overflow: hidden; background: var(--bg); }
+  .abs { position: absolute; }
+  .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 2.6px; text-transform: uppercase; color: var(--rose); }
+  .step { display: flex; align-items: center; gap: 12px; }
+  .step .num { width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px; flex: none; }
+  .step h2 { font-size: 30px; font-weight: 800; letter-spacing: -.6px; line-height: 1.1; }
+  .k { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; color: #fff; font-weight: 800; font-size: 14px; flex: none; }
+  .kA { background: var(--A); } .kB { background: var(--B); } .kC { background: var(--C); } .kD { background: var(--D); } .kE { background: var(--E); }
+
+  /* Header */
+  .title { left: 80px; top: 64px; width: 1560px; font-size: 48px; font-weight: 700; line-height: 1.12; letter-spacing: -1.2px; }
+  .name { right: 80px; top: 70px; text-align: right; font-size: 26px; line-height: 1.35; }
+  .desc { left: 80px; top: 196px; width: 1380px; font-size: 20px; line-height: 1.5; color: var(--ink2); }
+  .story { left: 80px; top: 280px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--ink2); }
+  .story b { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; }
+  .story b i { font-style: normal; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11px; display: grid; place-items: center; }
+  .story span.ar { color: var(--muted); }
+
+  /* 01 Archetype */
+  .s1 { left: 80px; top: 360px; width: 840px; }
+  .arch { display: grid; grid-template-columns: 1fr 300px; gap: 28px; margin-top: 20px; }
+  .arch h3 { font-size: 32px; font-weight: 800; line-height: 1.1; }
+  .goal { margin-top: 12px; font-size: 18px; line-height: 1.45; color: var(--ink2); }
+  .goal b { color: var(--ink); }
+  .gaps { margin-top: 18px; display: grid; gap: 9px; }
+  .gap { display: grid; grid-template-columns: 34px 1fr; gap: 10px; font-size: 15.5px; line-height: 1.35; color: var(--ink2); }
+  .gap i { width: 30px; height: 30px; border-radius: 50%; background: var(--maroon); color: #fff; font-style: normal; font-size: 12px; font-weight: 800; display: grid; place-items: center; }
+  .gap b { color: var(--ink); }
+  .mailbox { position: relative; }
+  .mailbox .cap { font-size: 12.5px; font-weight: 700; letter-spacing: 2px; color: var(--muted); }
+  .mailbox img.m { width: 300px; margin-top: 8px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.08); display: block; }
+  .mailbox img.c { width: 240px; display: block; margin: 16px 0 0 20px; }
+  .mailbox p { font-size: 14px; color: var(--ink2); line-height: 1.35; margin-top: 4px; }
+
+  /* 02 Voices */
+  .voices { left: 960px; top: 360px; width: 905px; height: 1190px; background: var(--maroon); border-radius: 44px; padding: 40px 46px; color: #fff; }
+  .voices .step .num { background: #fff; color: var(--maroon); }
+  .voices .eyebrow { color: #F4A9B9; margin-top: 14px; }
+  .voices h3 { font-size: 26px; font-weight: 700; margin-top: 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: 14.5px; color: #F2D6DD; }
+  .legend span { display: flex; align-items: center; gap: 7px; }
+  .legend i { width: 15px; height: 15px; border-radius: 50%; }
+  .grid { display: grid; grid-template-columns: repeat(5, 136px); gap: 10px 26px; margin-top: 16px; }
+  .c { position: relative; width: 136px; height: 136px; border-radius: 50%; background: var(--coral); color: var(--coral-ink); display: grid; place-items: center; text-align: center; padding: 14px; font-size: 12.8px; line-height: 1.22; }
+  .c .k { position: absolute; top: -4px; right: 6px; width: 24px; height: 24px; font-size: 12px; border-radius: 50%; box-shadow: 0 0 0 3px var(--maroon); }
+  .c.p { background: var(--purple); color: #22164F; }
+  .c.g { background: var(--green); color: #0D3B22; font-weight: 600; }
+  .c.g b { display: block; font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .c.blank { background: none; }
+  .gapline { position: absolute; left: 46px; right: 46px; bottom: 38px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .gapline > div { border-radius: 22px; padding: 16px 20px; background: rgba(255,255,255,.08); }
+  .gapline b { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
+  .gapline span { display: block; font-size: 15px; color: #F2D6DD; margin-top: 4px; }
+  .icons { display: grid; grid-template-columns: repeat(15, 14px); gap: 3px 6px; margin-top: 10px; }
+  .icons svg { width: 14px; height: 19px; }
+
+  /* 03 Why */
+  .s3 { left: 80px; top: 870px; width: 840px; }
+  .s3 .sub { font-size: 16px; color: var(--ink2); margin: 8px 0 0 52px; }
+  .rows { margin-top: 18px; display: grid; gap: 12px; }
+  .row { display: grid; grid-template-columns: 126px 1fr 30px 280px; gap: 14px; align-items: center; background: #fff; border-radius: 20px; padding: 14px 18px 14px 14px; border-left: 6px solid; }
+  .ball { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 30px; letter-spacing: -1px; }
+  .ball sup { font-size: 14px; }
+  .row .said { font-size: 17px; line-height: 1.3; }
+  .row .said small { display: block; font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+  .row .arr { font-size: 26px; color: var(--muted); text-align: center; }
+  .row .why h5 { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 800; }
+  .row .why p { font-size: 13.5px; line-height: 1.35; color: var(--ink2); margin-top: 4px; }
+  .row .why .src { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .rA { border-color: var(--A); } .rB { border-color: var(--B); } .rC { border-color: var(--C); } .rD { border-color: var(--D); } .rE { border-color: var(--E); }
+  .bA { background: radial-gradient(circle at 35% 30%, #F57E95, var(--A)); }
+  .bB { background: radial-gradient(circle at 35% 30%, #F6C06D, var(--B)); }
+  .bC { background: radial-gradient(circle at 35% 30%, #5FC392, var(--C)); }
+  .bD { background: radial-gradient(circle at 35% 30%, #A895EA, var(--D)); }
+  .bE { background: radial-gradient(circle at 35% 30%, #6CA9E8, var(--E)); }
+
+  /* 04 Hook */
+  .s4 { left: 80px; top: 1610px; width: 1785px; height: 300px; }
+  .quote { position: absolute; left: 0; top: 52px; width: 760px; height: 150px; background: var(--pink); border-radius: 36px 36px 36px 6px; display: flex; align-items: center; padding: 0 44px 0 110px; font-size: 27px; line-height: 1.3; }
+  .avatar { position: absolute; left: 26px; top: 40px; width: 64px; height: 64px; border-radius: 50%; background: #18181A; display: grid; place-items: center; }
+  .q47 { position: absolute; left: 0; top: 218px; width: 760px; display: flex; align-items: center; gap: 16px; }
+  .q47 b { font-size: 52px; font-weight: 800; letter-spacing: -2px; color: var(--A); line-height: 1; }
+  .q47 span { font-size: 16px; line-height: 1.35; color: var(--ink2); }
+  .q47 span strong { color: var(--ink); }
+  .hookbox { position: absolute; left: 880px; top: 52px; width: 905px; }
+  .hookbox h2 { font-size: 60px; font-weight: 800; letter-spacing: -2px; line-height: 1.04; }
+  .hookbox h2 em { font-style: normal; color: var(--red); }
+  .hookbox p { font-size: 20px; color: var(--ink2); margin-top: 14px; line-height: 1.4; }
+  .hookbox p b { color: var(--ink); }
+  .bridge { position: absolute; left: 790px; top: 110px; font-size: 40px; color: var(--red); }
+
+  /* 05 Solution */
+  .sol { left: 58px; top: 1960px; width: 1810px; height: 960px; background: var(--grey); border-radius: 44px; overflow: hidden; }
+  .sol .in { position: absolute; }
+  .sol .step { left: 40px; top: 34px; }
+  .sol .step .num { background: #fff; color: var(--ink); }
+  .sol .step h2 { color: #fff; }
+  .banner { left: 22px; top: 100px; width: 540px; border-radius: 22px; }
+  .nss { left: 40px; top: 390px; width: 510px; color: #F1F1F1; }
+  .nss h4 { font-size: 18px; font-weight: 700; color: #fff; }
+  .nss ul { list-style: none; margin-top: 10px; display: grid; gap: 8px; }
+  .nss li { display: grid; grid-template-columns: 32px 1fr; gap: 10px; font-size: 15px; line-height: 1.32; color: #E6E6E6; }
+  .nss li i { width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--maroon); font-style: normal; font-size: 11.5px; font-weight: 800; display: grid; place-items: center; }
+  .nss li b { color: #fff; }
+  .phone { border-radius: 40px; background: #0E0E10; padding: 8px; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+  .phone img { display: block; width: 100%; border-radius: 32px; }
+  .p1 { left: 120px; top: 640px; width: 290px; }
+  .p2 { left: 640px; top: 110px; width: 320px; }
+  .shot { border-radius: 18px; box-shadow: 0 14px 30px rgba(0,0,0,.3); display: block; }
+  .elig { left: 1020px; top: 110px; width: 370px; }
+  .avail { left: 1410px; top: 132px; width: 375px; }
+  .heroes { left: 1020px; top: 300px; width: 270px; }
+  .leader { left: 1300px; top: 276px; width: 230px; }
+  .event { left: 1550px; top: 276px; width: 238px; }
+  .learn { left: 1020px; top: 800px; display: flex; gap: 12px; }
+  .learn img { width: 144px; border-radius: 14px; box-shadow: 0 10px 24px rgba(0,0,0,.3); }
+  .learn .lk { position: absolute; left: 0; top: -26px; color: #fff; font-size: 15px; font-weight: 600; }
+  .tip { position: absolute; background: #fff; color: var(--ink); border-radius: 14px; padding: 10px 14px 11px; font-size: 13.5px; line-height: 1.3; box-shadow: 0 8px 20px rgba(0,0,0,.25); width: 220px; }
+  .tip .h { display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 800; margin-bottom: 3px; }
+  .tip .k { width: 22px; height: 22px; font-size: 12px; border-radius: 6px; }
+  .tip i.n { position: absolute; width: 12px; height: 12px; background: #fff; transform: rotate(45deg); }
+
+  .s3 { top: 840px; }
+  .rows { gap: 10px; margin-top: 14px; }
+  .row { grid-template-columns: 96px 1fr 26px 300px; padding: 9px 16px 9px 10px; }
+  .ball { width: 86px; height: 86px; font-size: 25px; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+  .ball sup { font-size: 13px; margin-left: 1px; }
+  .s4 { top: 1590px; }
+  .mailbox img.c { width: 200px; margin-left: 40px; }
+
+  .quote { top: 64px; }
+  .avatar { top: 107px; z-index: 2; }
+  .q47 { top: 228px; }
+  .bridge { top: 116px; }
+</style>
+</head>
+<body>
+<div class="board" id="board">
+
+  <h1 class="abs title">Breaking the Bystander Effect: Designing a Personalised Donor-Matching Experience for Urgent Blood Requests on Campus</h1>
+  <div class="abs name">Bhavya Upadhyay<br>264205004</div>
+  <p class="abs desc">Urgent blood requests at IIT Guwahati go out as one email to the whole campus, and almost no one answers. This project replaces that broadcast with a personal, time-bound ask to a few matched donors inside OneStop, the campus super-app.</p>
+  <div class="abs story">
+    <b><i>01</i>The archetype</b><span class="ar">→</span>
+    <b><i>02</i>What students said</b><span class="ar">→</span>
+    <b><i>03</i>Why it happens</b><span class="ar">→</span>
+    <b><i>04</i>The hook</b><span class="ar">→</span>
+    <b><i>05</i>The solution</b>
+    <span class="ar" style="margin-left:22px">Follow the letters</span>
+    <span class="k kA">A</span><span class="k kB">B</span><span class="k kC">C</span><span class="k kD">D</span><span class="k kE">E</span>
+    <span class="ar">from each reason to its design response.</span>
+  </div>
+
+  <!-- 01 -->
+  <section class="abs s1">
+    <div class="step"><span class="num">01</span><h2>The NSS office needs donors. Its only tool is an email to everyone.</h2></div>
+    <div class="arch">
+      <div>
+        <div class="eyebrow">Archetype</div>
+        <h3 style="margin-top:6px">The NSS Office, IIT Guwahati</h3>
+        <p class="goal">Goal: <b>engage more students in urgent blood donation</b>, and keep them coming back.</p>
+        <div class="gaps">
+          <div class="gap"><i>G1</i><div><b>One broadcast</b> to every student, faculty and staff member.</div></div>
+          <div class="gap"><i>G2</i><div><b>No visibility</b> of who saw it or how many units remain.</div></div>
+          <div class="gap"><i>G3</i><div><b>Manual coordination</b> to confirm, screen and arrange travel.</div></div>
+          <div class="gap"><i>G4</i><div><b>No closure, no memory.</b> Donors never hear back.</div></div>
+        </div>
+      </div>
+      <div class="mailbox">
+        <div class="cap">TODAY'S ASK</div>
+        <img class="m" src="mail.png" alt="NSS blood requirement mail">
+        <img class="c" src="crowd.png" alt="">
+        <p><b>Apathy:</b> sent to everyone, it feels meant for no one.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="abs voices">
+    <div class="step"><span class="num">02</span><h2 style="color:#fff">What students said</h2></div>
+    <div class="eyebrow">30 students surveyed · 32 people interviewed</div>
+    <h3>"Why didn't you respond to the NSS blood requirement mail?"</h3>
+    <div class="legend">
+      <span><i style="background:var(--coral)"></i>Never interacted</span>
+      <span><i style="background:var(--purple)"></i>Interacted, couldn't donate</span>
+      <span><i style="background:var(--green)"></i>Responded</span>
+      <span style="margin-left:8px">Letter = reason, explained in 03</span>
+    </div>
+    <div class="grid">
+      <div class="c"><span class="k kB">B</span>I get a lot of mails every day. Miss ho jata hai.</div>
+      <div class="c"><span class="k kA">A</span>I always guessed someone must have given it. I never bothered.</div>
+      <div class="c"><span class="k kC">C</span>It felt like a lot of work.</div>
+      <div class="c"><span class="k kD">D</span>Never donated before. Didn't know if I could.</div>
+      <div class="c"><span class="k kB">B</span>These mails go straight to spam.</div>
+
+      <div class="c"><span class="k kC">C</span>Time issue and too many commitments. It didn't feel urgent.</div>
+      <div class="c"><span class="k kA">A</span>I ignore it because there's an active donor community. Someone else will do it.</div>
+      <div class="c"><span class="k kD">D</span>They take a lot of blood. I might fall ill.</div>
+      <div class="c"><span class="k kB">B</span>The blood group rarely matched mine, so I stopped opening them.</div>
+      <div class="c"><span class="k kC">C</span>If it involves going somewhere, I'm never available.</div>
+
+      <div class="c"><span class="k kB">B</span>Never noticed receiving this mail.</div>
+      <div class="c"><span class="k kD">D</span>I'm not sure I should be donating. I'm scared of it, probably.</div>
+      <div class="c"><span class="k kA">A</span>I just don't take the mail seriously. I'd donate when it's actually urgent.</div>
+      <div class="c"><span class="k kC">C</span>I want to donate, but I'm lazy and I postpone it.</div>
+      <div class="c"><span class="k kB">B</span>I used to read them. Now it's just text that doesn't feel relevant.</div>
+
+      <div class="c"><span class="k kD">D</span>I have no idea about blood donation, so I avoid it.</div>
+      <div class="c"><span class="k kA">A</span>I'd prefer donating to someone I know personally.</div>
+      <div class="c"><span class="k kC">C</span>It isn't possible to go to the city with my academic schedule.</div>
+      <div class="c"><span class="k kB">B</span>I get so many mails in Outlook, I don't open them.</div>
+      <div class="c"><span class="k kD">D</span>I don't feel well in Guwahati, so donating isn't for me.</div>
+
+      <div class="c p"><span class="k kE">E</span>I have already donated, so I don't open these mails.</div>
+      <div class="c p"><span class="k kE">E</span>I called them, but the request was already met.</div>
+      <div class="c blank"></div>
+      <div class="c blank"></div>
+      <div class="c g"><div><b>2 / 30</b>responded and donated</div></div>
+    </div>
+    <div class="gapline">
+      <div><b style="color:#9EE6BC">24 / 30</b><span>said they are open to donating</span><div class="icons" id="icons"></div></div>
+      <div><b style="color:#FF9AAA">6.6%</b><span>ever responded to the mail. The gap isn't willingness, it's the ask.</span></div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="abs s3">
+    <div class="step"><span class="num">03</span><h2>Why it happens: five reasons, five known biases</h2></div>
+    <p class="sub">What students said (survey) → the behavioural cause behind it (secondary research).</p>
+    <div class="rows">
+      <div class="row rA"><div class="ball bA">93.3<sup>%</sup></div><div class="said"><b>"Someone else will do it"</b><small>assumed someone else would respond</small></div><div class="arr">→</div><div class="why"><h5><span class="k kA">A</span>Bystander effect</h5><p>In a crowd, personal responsibility dissolves.</p><div class="src">Darley &amp; Latané, 1968</div></div></div>
+      <div class="row rB"><div class="ball bB">27<sup>%</sup></div><div class="said"><b>"Just another mail"</b><small>ignored the emails as spam</small></div><div class="arr">→</div><div class="why"><h5><span class="k kB">B</span>Habituation</h5><p>Repeated, similar mails train the brain to ignore the whole category.</p><div class="src">Chaparro et al., 2017</div></div></div>
+      <div class="row rC"><div class="ball bC">50<sup>%</sup></div><div class="said"><b>"Too much effort"</b><small>didn't have enough time to spare</small></div><div class="arr">→</div><div class="why"><h5><span class="k kC">C</span>Friction overestimation</h5><p>People overestimate the effort of responding and travelling.</p><div class="src">Thaler &amp; Sunstein, 2008</div></div></div>
+      <div class="row rD"><div class="ball bD">16.7<sup>%</sup></div><div class="said"><b>"Not sure it's safe for me"</b><small>were concerned about their health</small></div><div class="arr">→</div><div class="why"><h5><span class="k kD">D</span>First-timer barrier</h5><p>Without knowing eligibility or what happens, people default to "not me".</p><div class="src">Lemmens et al., 2005</div></div></div>
+      <div class="row rE"><div class="ball bE">46<sup>%</sup></div><div class="said"><b>"Nothing comes back"</b><small>of regular donors started because a donor friend influenced them</small></div><div class="arr">→</div><div class="why"><h5><span class="k kE">E</span>No feedback, no social proof</h5><p>Giving goes unseen, so it never spreads.</p><div class="src">Secondary research</div></div></div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="abs s4">
+    <div class="step"><span class="num">04</span><h2>The hook</h2></div>
+    <div class="avatar"><svg width="34" height="34" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.2"/><path d="M3.5 21c.8-4.4 4.2-7 8.5-7s7.7 2.6 8.5 7z"/></svg></div>
+    <div class="quote">"I think the times I did donate blood was when someone personally asked me."</div>
+    <div class="q47"><b>47%</b><span>of non-donors never donated because they were <strong>never personally asked</strong>. <span style="color:var(--muted)">Babu et al., 2019</span></span></div>
+    <div class="bridge">→</div>
+    <div class="hookbox">
+      <h2>Don't ask everyone.<br><em>Ask the right few, by name.</em></h2>
+      <p>Each request goes to <b>2 matched, eligible donors per unit</b> as a personal, time-bound ask, and every step after "yes" is made effortless.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="abs sol">
+    <div class="in step"><span class="num">05</span><h2>The solution in OneStop, answering A–E</h2></div>
+    <img class="in banner" src="nss_banner.png" alt="Donor Match for the NSS office">
+    <div class="in nss">
+      <h4>For the NSS office, every gap closed</h4>
+      <ul>
+        <li><i>G1</i><div><b>Matched, not broadcast:</b> raise once, sent to eligible donors only.</div></li>
+        <li><i>G2</i><div><b>Live view:</b> asked, seen, said yes, units left.</div></li>
+        <li><i>G3</i><div><b>Slots and rides</b> handled inside the donor's card.</div></li>
+        <li><i>G4</i><div><b>Confirmed and remembered:</b> a growing donor registry.</div></li>
+      </ul>
+    </div>
+
+    <div class="in phone p1"><img src="s2_request.png" alt=""></div>
+    <div class="tip" style="left:420px; top:670px"><i class="n" style="left:-5px; top:18px"></i><div class="h"><span class="k kA">A</span>Personal and finite</div>Asked by name; "only 6 students were asked"; units left.</div>
+    <div class="tip" style="left:420px; top:790px"><i class="n" style="left:-5px; top:18px"></i><div class="h"><span class="k kB">B</span>Relevant and in-app</div>Only matched groups, in place of the Time Table card.</div>
+
+    <div class="in phone p2"><img src="s8_explore.png" alt=""></div>
+    <div class="tip" style="left:700px; top:750px; width:250px"><i class="n" style="left:30px; top:-5px"></i><div class="h"><span class="k kD">D</span>Lower the barrier</div>Eligibility up front, nearby camps, myths vs facts in 30 secs.</div>
+
+    <img class="in shot elig" src="elig.png" alt="">
+    <img class="in shot avail" src="avail.png" alt="">
+        <img class="in shot heroes" src="heroes.png" alt="">
+    <img class="in shot leader" src="leader.png" alt="">
+    <img class="in shot event" src="event.png" alt="">
+    <div class="tip" style="left:1060px; top:520px"><i class="n" style="left:30px; top:-5px"></i><div class="h"><span class="k kE">E</span>Seen and celebrated</div>Monthly heroes and a hostel leaderboard turn giving into social proof.</div>
+    <div class="tip" style="left:1560px; top:634px"><i class="n" style="left:40px; top:-5px"></i><div class="h"><span class="k kC">C</span>Effortless after yes</div>Slide to commit, coordinate with the POC, request a ride.</div>
+
+    <div class="in learn"><span class="lk">Learn in 30 secs</span>
+      <img src="learn_myths.png" alt=""><img src="learn_who.png" alt=""><img src="learn_benefits.png" alt=""><img src="learn_dos.png" alt=""><img src="learn_types.png" alt="">
+    </div>
+  </section>
+</div>
+<script>
+  const box = document.getElementById('icons');
+  for (let i = 0; i < 30; i++) {
+    const c = i < 24 ? '#9EE6BC' : 'rgba(255,255,255,.25)';
+    box.insertAdjacentHTML('beforeend', `<svg viewBox="0 0 18 24"><circle cx="9" cy="4" r="3.6" fill="${c}"/><path d="M3 9.5c0-1.4 1.1-2.5 2.5-2.5h7c1.4 0 2.5 1.1 2.5 2.5V16h-2.5v8h-3v-6h-1v6h-3v-8H3z" fill="${c}"/></svg>`);
+  }
+</script>
+</body>
+</html>
