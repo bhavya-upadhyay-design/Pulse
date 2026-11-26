@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Geist; src: local("Geist") /* Geist, from onestop_ui; install it or point this at the .ttf to re-render */; font-weight: 100 900; }
+  :root {
+    --maroon: #9E1240;
+    --maroon-deep: #7A0C30;
+    --intro: #E58BA3;
+    --ink: #1C1C1C;
+    --muted: #8C8C8C;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: transparent; font-family: Geist, sans-serif; }
+  .banner {
+    position: relative;
+    width: 720px; height: 360px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 30% 55%, #FCE1DF 0%, rgba(252,225,223,0) 60%),
+      radial-gradient(80% 90% at 100% 100%, #FCB9D2 0%, rgba(252,185,210,0) 70%),
+      linear-gradient(135deg, #FBB9C1 0%, #FCD3D3 45%, #FDC4D6 100%);
+  }
+  /* faint concentric pulse rings, echoing the research deck */
+  .rings { position: absolute; left: 250px; top: -140px; width: 420px; height: 420px; border-radius: 50%;
+    background: repeating-radial-gradient(circle, rgba(222,17,53,0.05) 0 14px, rgba(222,17,53,0) 14px 30px); opacity: .45; }
+
+  .tab {
+    position: absolute; left: 28px; top: 0;
+    padding: 12px 18px 12px;
+    background: var(--maroon);
+    border-radius: 0 0 14px 14px;
+    color: #fff; font-weight: 600; font-size: 19px; letter-spacing: -0.2px;
+  }
+  .copy { position: absolute; left: 28px; top: 92px; width: 330px; }
+  .intro { color: var(--intro); font-size: 15px; font-weight: 500; letter-spacing: 5px; }
+  .title { margin-top: 8px; color: var(--maroon); font-size: 44px; line-height: 1.02; font-weight: 800; letter-spacing: -1px; }
+  .steps { margin-top: 26px; display: flex; align-items: center; gap: 10px; color: var(--maroon); font-size: 14.5px; font-weight: 600; }
+  .steps .chev { width: 9px; height: 9px; border-right: 2px solid var(--maroon); border-top: 2px solid var(--maroon); transform: rotate(45deg); opacity: .8; }
+
+  .cards { position: absolute; left: 392px; top: 34px; width: 360px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* Card 1: the Figma "New request widget", condensed */
+  .req {
+    border-radius: 18px; padding: 18px 18px 16px;
+    border: 1px solid #2F2F2F;
+    background: radial-gradient(70% 140% at 50% 0%, #8A3947 0%, #6D303A 25%, #4F272E 50%, #321D21 75%, #141414 100%);
+    box-shadow: 0 14px 30px rgba(122, 12, 48, .28);
+  }
+  .req-top { display: flex; align-items: center; gap: 12px; }
+  .medal { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); display: grid; place-items: center; flex: none; }
+  .medal img { width: 16px; height: 19px; }
+  .req h3 { color: #fff; font-size: 15.5px; font-weight: 700; }
+  .req p { color: #A0A0A0; font-size: 11.5px; margin-top: 3px; }
+  .req p b { color: #CFCFCF; font-weight: 700; }
+  .slider { position: relative; margin-top: 16px; height: 36px; border-radius: 71px; background: rgba(255,255,255,.35); width: 300px; }
+  .slider .halo { position: absolute; left: 0; top: 0; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.5); }
+  .slider .knob { position: absolute; left: 3px; top: 3px; width: 30px; height: 30px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .slider .knob img { width: 19px; height: 19px; }
+  .slider span { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 11.5px; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,.25); padding-left: 20px; }
+
+  /* Card 2: white status card, like the template's metric cards */
+  .stat {
+    background: #fff; border-radius: 18px; padding: 16px 18px;
+    box-shadow: 0 10px 26px rgba(158, 18, 64, .14);
+  }
+  .stat-top { display: flex; align-items: center; gap: 12px; }
+  .stat .drop { width: 34px; height: 34px; border-radius: 10px; background: #FCD9DF; display: grid; place-items: center; flex: none; }
+  .stat .drop img { width: 14px; height: 17px; }
+  .stat h4 { color: var(--ink); font-size: 15px; font-weight: 700; }
+  .stat small { display: block; color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+  .avatars { margin-left: auto; margin-right: 38px; display: flex; }
+  .avatars img, .avatars i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; margin-left: -8px; background: #F1F1F1; object-fit: cover; }
+  .avatars i { display: grid; place-items: center; font-style: normal; font-size: 10px; font-weight: 700; color: #8C8C8C; }
+  .stat-bottom { margin-top: 14px; display: flex; align-items: center; gap: 12px; padding-right: 38px; }
+  .stat-bottom em { font-style: normal; color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  .units { flex: 1; display: flex; gap: 5px; }
+  .units div { flex: 1; height: 5px; border-radius: 3px; background: #E9E9EA; }
+  .units .on { background: #2CB462; }
+  .for { display: inline-block; margin-top: 12px; padding: 5px 12px; border-radius: 99px; background: rgba(158,18,64,.1); color: var(--maroon); font-size: 12.5px; font-weight: 600; }
+  .chips { margin-top: 16px; display: flex; gap: 8px; }
+  .chip { flex: 1; padding: 8px 10px; border-radius: 12px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.12); }
+  .chip b { display: block; color: #fff; font-size: 17px; font-weight: 700; line-height: 1; }
+  .chip span { display: block; margin-top: 4px; color: #BDBDBD; font-size: 10.5px; }
+  .chip.yes b { color: #52E08B; }
+  .live { display: inline-flex; vertical-align: 1px; margin-right: 4px; padding: 2px 8px; border-radius: 99px; background: rgba(253,68,95,.18); color: #FF8A9C; font-size: 10.5px; font-weight: 600; align-items: center; gap: 5px; }
+  .req > * { max-width: 292px; }
+  .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FD445F; }
+</style>
+</head>
+<body>
+  <div class="banner" id="banner">
+    <div class="rings"></div>
+    <div class="tab">OneStop</div>
+
+    <div class="copy">
+      <div class="intro">INTRODUCING</div>
+      <div class="title">Donor<br>Match</div>
+      <div class="for">for the NSS office</div>
+      <div class="steps">
+        <span>Raise</span><i class="chev"></i><span>Match</span><i class="chev"></i><span>Confirm</span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="req">
+        <div class="req-top">
+          <div class="medal"><img src="drop_flame.svg" alt=""></div>
+          <div>
+            <h3>O+ request sent to 6 donors</h3>
+            <p><span class="live">Live</span> GMCH • 3 units • eligible donors</p>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip"><b>6</b><span>Asked</span></div>
+          <div class="chip"><b>5</b><span>Seen</span></div>
+          <div class="chip yes"><b>2</b><span>Said yes</span></div>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-top">
+          <div class="drop"><img src="drop_flame.svg" alt=""></div>
+          <div>
+            <h4>2 of 3 units confirmed</h4>
+            <small>Kabir and Ishita said yes</small>
+          </div>
+          <div class="avatars">
+            <img src="avatar_4.png" alt=""><img src="avatar_5.png" alt="">
+          </div>
+        </div>
+        <div class="stat-bottom">
+          <em>1 more donor needed</em>
+          <div class="units"><div class="on"></div><div class="on"></div><div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
