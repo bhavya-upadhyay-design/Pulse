@@ -77,6 +77,14 @@
   .concept .sm { font-size: 12.5px; fill: #8A8A90; }
   .concept .ann { font-size: 15px; font-weight: 700; fill: #6E6A63; }
   .concept .ann.red { fill: #E2365A; }
+  .concept .lab.g { fill: #299856; font-weight: 600; } .concept .lab.r { fill: #E2365A; font-weight: 600; }
+  .concept .bx { font-size: 12.5px; fill: #6E6A63; text-anchor: middle; font-weight: 500; }
+  .concept .pill { font-size: 16px; font-weight: 700; fill: #fff; text-anchor: middle; }
+  .concept .g2 { font-size: 14px; font-weight: 700; fill: #299856; }
+  .concept .ib { font-size: 12.5px; fill: #8A8A90; }
+  .concept .hint { font-size: 11.5px; fill: #9A9AA0; font-style: italic; }
+  .concept .ct { font-size: 16px; font-weight: 800; fill: #151517; }
+  .concept .cs { font-size: 13px; fill: #6E6A63; }
   #ability .art, #prompt .art { margin-top: 18px; height: 170px; }
 </style>
 </head>
@@ -87,43 +95,16 @@
   <h1>Ability</h1>
   <div class="art">
     <svg width="804" height="170" viewBox="0 0 804 170" class="concept">
-      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9A9AA0"/></marker>
-      <linearGradient id="ramp" x1="0" x2="1"><stop offset="0" stop-color="#299856" stop-opacity=".25"/><stop offset="1" stop-color="#299856" stop-opacity=".06"/></linearGradient></defs>
-      <!-- Today: a staircase of effort -->
-      <text x="0" y="12" class="lab">TODAY · A STAIRCASE OF EFFORT</text>
-      <g fill="#ECE8E2" stroke="#D9D3C9">
-        <rect x="0"   y="138" width="56" height="22"/>
-        <rect x="56"  y="118" width="56" height="42"/>
-        <rect x="112" y="98"  width="56" height="62"/>
-        <rect x="168" y="78"  width="56" height="82"/>
-        <rect x="224" y="58"  width="56" height="102"/>
-        <rect x="280" y="38"  width="56" height="122"/>
-      </g>
-      <g class="stp">
-        <text x="28" y="153">mail</text><text x="84" y="133">group</text><text x="140" y="113">eligible?</text>
-        <text x="196" y="93">call</text><text x="252" y="73">travel</text><text x="308" y="53">hospital</text>
-      </g>
-      <!-- figure at the bottom, stuck -->
-      <g transform="translate(14,104)"><circle cx="8" cy="6" r="6" fill="#9A9AA0"/><path d="M2 32 L8 14 L14 32 M8 14 V24 M1 20 H15" stroke="#9A9AA0" stroke-width="3" fill="none" stroke-linecap="round"/></g>
-      <text x="42" y="98" class="q">?</text>
-      <path d="M360 100 H 420" stroke="#9A9AA0" stroke-width="2" marker-end="url(#ar)"/>
-      <!-- Now: one gentle ramp -->
-      <text x="440" y="12" class="lab">WITH THE PRECISION ASK · ONE GESTURE</text>
-      <path d="M440 160 L 800 160 L 800 128 Z" fill="url(#ramp)"/>
-      <path d="M440 160 L 800 128" stroke="#299856" stroke-width="3" stroke-linecap="round"/>
-      <!-- slider-knob heart rolling up the ramp, with a motion trail -->
-      <g opacity=".25"><circle cx="520" cy="134" r="13" fill="#E2365A"/></g>
-      <g opacity=".5"><circle cx="590" cy="128" r="13" fill="#E2365A"/></g>
-      <circle cx="668" cy="121" r="17" fill="#fff" stroke="#E2365A" stroke-width="3"/>
-      <path d="M668 128 c-8-5-11-9-11-13 a5 5 0 0 1 11-2 a5 5 0 0 1 11 2 c0 4-3 8-11 13z" fill="#E2365A"/>
-      <!-- what got absorbed by the system -->
-      <g class="abs2">
-        <text x="460" y="60">eligibility · pre-checked</text>
-        <text x="460" y="80">travel · ride on request</text>
-        <text x="460" y="100">contact · POC on tap</text>
-      </g>
-      <text x="800" y="60" class="big" text-anchor="end">6 → 1</text>
-      <text x="800" y="80" class="sm" text-anchor="end">steps the student carries</text>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#B9B3AA"/></marker></defs>
+      <text x="0" y="14" class="lab">TODAY · 6 STEPS, ALL ON THE STUDENT</text>
+      <rect x="0" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="59" y="51" class="bx">Read the mail</text><path d="M122 46 H133" stroke="#B9B3AA" stroke-width="1.6" marker-end="url(#ar)"/><rect x="137" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="196" y="51" class="bx">Check if eligible</text><path d="M259 46 H270" stroke="#B9B3AA" stroke-width="1.6" marker-end="url(#ar)"/><rect x="274" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="333" y="51" class="bx">Find who to call</text><path d="M396 46 H407" stroke="#B9B3AA" stroke-width="1.6" marker-end="url(#ar)"/><rect x="411" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="470" y="51" class="bx">Call & confirm</text><path d="M533 46 H544" stroke="#B9B3AA" stroke-width="1.6" marker-end="url(#ar)"/><rect x="548" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="607" y="51" class="bx">Arrange travel</text><path d="M670 46 H681" stroke="#B9B3AA" stroke-width="1.6" marker-end="url(#ar)"/><rect x="685" y="26" width="118" height="40" rx="8" fill="#F1EEEA" stroke="#DDD7CE"/><text x="744" y="51" class="bx">Find the ward</text>
+      <text x="0" y="100" class="lab g">WITH THE PRECISION ASK · 1 STEP FOR THE STUDENT</text>
+      <rect x="0" y="112" width="250" height="46" rx="23" fill="#299856"/>
+      <circle cx="23" cy="135" r="18" fill="#fff"/>
+      <path d="M23 142 c-8-5-11-9-11-13 a5 5 0 0 1 11-2 a5 5 0 0 1 11 2 c0 4-3 8-11 13z" fill="#E2365A"/>
+      <text x="140" y="141" class="pill">Swipe to say yes</text>
+      <text x="280" y="130" class="g2">The other five are done for them:</text>
+      <text x="280" y="150" class="sm">eligibility checked at sign-up · NSS sets the slot &amp; ride · POC one tap away</text>
     </svg>
   </div>
   <p class="move">Pre-screened at onboarding, slide to commit, POC on tap, ride on request</p>
@@ -135,26 +116,21 @@
   <h1>Prompt</h1>
   <div class="art">
     <svg width="804" height="170" viewBox="0 0 804 170" class="concept">
-      <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter></defs>
-      <text x="0" y="12" class="lab">SIGNAL-TO-NOISE</text>
-      <!-- baseline -->
-      <line x1="0" y1="150" x2="804" y2="150" stroke="#E6E1DA" stroke-width="1.5"/>
-      <!-- noise: identical mails, identical low peaks -->
-      <path id="noise" d="" fill="none" stroke="#C9C3BA" stroke-width="2" stroke-linejoin="round"/>
-      <g id="envs"></g>
-      <!-- the signal -->
-      <ellipse cx="560" cy="62" rx="44" ry="44" fill="#E2365A" opacity=".18" filter="url(#glow)"/>
-      <path d="M528 150 L 548 150 L 560 40 L 572 150 L 592 150" fill="none" stroke="#E2365A" stroke-width="3.5" stroke-linejoin="round"/>
-      <!-- the ask: drop + notification dot -->
-      <circle cx="560" cy="26" r="17" fill="#55092B"/>
-      <path d="M560 15 c0 0 -8 9 -8 14 a8 8 0 0 0 16 0 c0 -5 -8 -14 -8 -14z" fill="#FD445F"/>
-      <circle cx="574" cy="12" r="6" fill="#E2365A" stroke="#fff" stroke-width="2"/>
-      <!-- annotations -->
-      <text x="20" y="44" class="ann">"Dear all" × 3–4 a day</text>
-      <text x="20" y="62" class="sm">same shape, same size, easy to ignore</text>
-      <text x="610" y="36" class="ann red">One ask, for you</text>
-      <text x="610" y="54" class="sm">matched · just in time</text>
-      <text x="610" y="70" class="sm">where you already look</text>
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9A9AA0"/></marker></defs>
+      <text x="0" y="14" class="lab">TODAY · THE ASK LOOKS LIKE EVERY OTHER MAIL</text>
+      <g transform="translate(0,26)"><rect width="360" height="22" rx="4" fill="#F4F1ED"/><rect x="8" y="6" width="14" height="10" rx="1.5" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><path d="M9 7 L15 11.5 L21 7" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><text x="30" y="15" class="ib">Dear all, fest volunteers needed</text></g><g transform="translate(0,53)"><rect width="360" height="22" rx="4" fill="#F4F1ED"/><rect x="8" y="6" width="14" height="10" rx="1.5" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><path d="M9 7 L15 11.5 L21 7" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><text x="30" y="15" class="ib">Dear all, hostel water cut today</text></g><g transform="translate(0,80)"><rect width="360" height="22" rx="4" fill="#F4F1ED"/><rect x="8" y="6" width="14" height="10" rx="1.5" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><path d="M9 7 L15 11.5 L21 7" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><text x="30" y="15" class="ib">Dear all, urgent blood required</text></g><g transform="translate(0,107)"><rect width="360" height="22" rx="4" fill="#F4F1ED"/><rect x="8" y="6" width="14" height="10" rx="1.5" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><path d="M9 7 L15 11.5 L21 7" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><text x="30" y="15" class="ib">Dear all, club recruitment open</text></g><g transform="translate(0,134)"><rect width="360" height="22" rx="4" fill="#F4F1ED"/><rect x="8" y="6" width="14" height="10" rx="1.5" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><path d="M9 7 L15 11.5 L21 7" fill="none" stroke="#AFA9A0" stroke-width="1.3"/><text x="30" y="15" class="ib">Dear all, lost &amp; found</text></g>
+      <path d="M366 91 H 384" stroke="#9A9AA0" stroke-width="1.4"/>
+      <text x="388" y="88" class="hint">the blood</text><text x="388" y="102" class="hint">request</text>
+      <path d="M396 126 H 446" stroke="#9A9AA0" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="470" y="14" class="lab r">WITH THE PRECISION ASK · ONE ASK, ONLY TO YOU</text>
+      <rect x="470" y="34" width="334" height="76" rx="14" fill="#FDECEF" stroke="#E2365A" stroke-width="2"/>
+      <circle cx="506" cy="72" r="20" fill="#55092B"/>
+      <path d="M506 60 c0 0 -9 10 -9 15 a9 9 0 0 0 18 0 c0 -5 -9 -15 -9 -15z" fill="#FD445F"/>
+      <text x="538" y="66" class="ct">Your O+ blood is needed today</text>
+      <text x="538" y="87" class="cs">GMCH · 2 units · reply in 2 h</text>
+      <circle cx="796" cy="40" r="8" fill="#E2365A" stroke="#fff" stroke-width="2.5"/>
+      <text x="470" y="136" class="sm">Sent only to matched donors, when it's needed,</text>
+      <text x="470" y="154" class="sm">on top of OneStop Home where they already look</text>
     </svg>
   </div>
   <p class="move">A matched, just-in-time ask that takes the top of OneStop Home</p>
@@ -181,17 +157,5 @@
   <div class="chips"><span>Peak-end rule</span><span>Closed feedback loop</span><span>Social proof</span></div>
 </div>
 
-<script>
-  // noise: many identical low bumps (one per mail), with an envelope above some
-  let d = 'M0 150', env = '';
-  for (let x = 0; x < 804; x += 26) {
-    if (x > 515 && x < 600) { d += ` L ${x} 150`; continue; }
-    d += ` L ${x + 8} 150 L ${x + 13} 126 L ${x + 18} 150`;
-    if ((x / 26) % 3 === 0 && (x < 500 || x > 610) && x > 260 || (x/26)%3===0 && x<240 && false)
-      env += `<g transform="translate(${x + 5},104)" opacity=".55"><rect width="16" height="11" rx="2" fill="none" stroke="#B9B3AA" stroke-width="1.5"/><path d="M1 1 L8 6 L15 1" fill="none" stroke="#B9B3AA" stroke-width="1.5"/></g>`;
-  }
-  document.getElementById('noise').setAttribute('d', d + ' L 804 150');
-  document.getElementById('envs').innerHTML = env;
-</script>
 </body>
 </html>
